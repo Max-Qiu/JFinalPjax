@@ -1,0 +1,76 @@
+#-- 如果是 pjax 请求则只调用 main 函数 否则调用 doLayout 函数 --#
+#define layout()
+#if(isPjax)
+#@main()
+#else
+#@doLayout()
+#end
+#end
+#-- 主页面 --#
+#define doLayout()
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>JFinalPjaxDemo</title>
+    <link rel="stylesheet" type="text/css" href="http://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.css"/>
+    <script src="http://cdn.staticfile.org/jquery/1.12.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://cdn.staticfile.org/jquery.pjax/2.0.1/jquery.pjax.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        /**
+         * 开启pjax
+         */
+        $(document).pjax('[data-pjax] a, a[data-pjax]', '#pjax-container', {
+            /*pjax等待时间，单位ms，0为一直等待（可选项）*/
+            timeout: 0,
+            /*禁用缓存（可选项）*/
+            cache: false
+        });
+        /**
+         * 关闭NProgress右上角的小圆圈（可选项）
+         */
+        NProgress.configure({
+            showSpinner: false
+        });
+        /**
+         * pjax开启与结束时使用nprogress特效
+         */
+        $(document).on('pjax:start', function () {
+            NProgress.start();
+        }).on('pjax:end', function () {
+            NProgress.done();
+        });
+
+        /**
+         * 使用pjax加载页面：其他地方需要无刷新变更页面时，调用此方法，传入URL即可
+         */
+        function jumpByPjax(url) {
+            $.pjax({
+                url: url,
+                container: '#pjax-container'
+            })
+        }
+    </script>
+</head>
+
+<body>
+<!-- 菜单demo -->
+<ul>
+    <li>
+        <a data-pjax href="index">index</a>
+    </li>
+    <li>
+        <a data-pjax href="test">test</a>
+    </li>
+</ul>
+<!-- 主要内容 -->
+<div id="pjax-container">
+    #@main()
+</div>
+</body>
+
+</html>
+#end
